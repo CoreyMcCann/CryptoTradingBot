@@ -19,8 +19,8 @@ logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 
 if __name__ == '__main__':
-    binance = BinanceFuturesClient(True)
-    print(binance.get_historical_candles("BTCUSDT", "1h"))
+    binance = BinanceFuturesClient("public goes here",
+                                   "secret goes here", True)
 
     root = tk.Tk()
     root.mainloop()
