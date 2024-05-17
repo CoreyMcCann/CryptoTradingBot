@@ -82,7 +82,7 @@ class BinanceFuturesClient:
 
         if exchange_info is not None:
             for contract_data in exchange_info['symbols']:
-                contracts[contract_data['pair']] = Contract(contract_data)
+                contracts[contract_data['pair']] = Contract(contract_data, "binance")
 
         return contracts
 
@@ -127,7 +127,7 @@ class BinanceFuturesClient:
 
         if account_data is not None:
             for a in account_data['assets']:
-                balances[a['asset']] = Balance(a)
+                balances[a['asset']] = Balance(a, "binance")
 
         return balances
 
@@ -197,7 +197,7 @@ class BinanceFuturesClient:
     def _on_open(self, ws):
         logger.info("Binance connection opened")
 
-        self.subscribe_channel(self.contracts['BTCUSDT'])
+        self.subscribe_channel(list(self.contracts.values()), "bookTicker")
 
     def _on_close(self, ws):
         logger.warning("Binance WebSocket connection close")
@@ -220,17 +220,19 @@ class BinanceFuturesClient:
                     self.prices[symbol]['bid'] = float(data['b'])
                     self.prices[symbol]['ask'] = float(data['a'])
 
-    def subscribe_channel(self, contract: Contract):
+    def subscribe_channel(self, contracts: typing.List[Contract], channel: str):
         data = dict()
         data['method'] = "SUBSCRIBE"
         data['params'] = []
-        data['params'].append(contract.symbol.lower() + "@bookTicker")
+
+        for contract in contracts:
+            data['params'].append(contract.symbol.lower() + "@" + channel)
         data['id'] = self._ws_id
 
         try:
             self.ws.send(json.dumps(data))
         except Exception as e:
-            logger.error("Websocket error while subscribing to %s: %s", contract.symbol, e)
+            logger.error("Websocket error while subscribing to %s %s updates: %s", len(contracts), channel, e)
 
         self._ws_id += 1
 
