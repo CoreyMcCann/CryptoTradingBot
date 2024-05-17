@@ -24,6 +24,8 @@ if __name__ == '__main__':
 
     bitmex = BitmexClient("public goes here", "secret goes here", True)
 
+    print(bitmex.place_order(bitmex.contracts['XBTUSD'], "Limit", 100, "Buy", 20000.4939338, "GoodTillCancel"))
+
     root = tk.Tk()
     root.mainloop()
 
