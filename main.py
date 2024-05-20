@@ -3,6 +3,8 @@ import logging
 from connectors.binance_futures import BinanceFuturesClient
 from connectors.bitmex import BitmexClient
 
+from interface.root_component import Root
+
 logger = logging.getLogger()
 
 logger.setLevel(logging.INFO)
@@ -20,13 +22,11 @@ logger.addHandler(stream_handler)
 logger.addHandler(file_handler)
 
 if __name__ == '__main__':
-    binance = BinanceFuturesClient("public goes here","secret goes here", True)
+    binance = BinanceFuturesClient("public goes here", "secret goes here", True)
 
     bitmex = BitmexClient("public goes here", "secret goes here", True)
 
-    print(bitmex.place_order(bitmex.contracts['XBTUSD'], "Limit", 100, "Buy", 20000.4939338, "GoodTillCancel"))
-
-    root = tk.Tk()
+    root = Root(binance, bitmex)
     root.mainloop()
 
 

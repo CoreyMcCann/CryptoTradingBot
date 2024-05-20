@@ -21,7 +21,6 @@ logger = logging.getLogger()
 
 class BitmexClient:
     def __init__(self, public_key: str, secret_key: str, testnet: bool):
-
         if testnet:
             self._base_url = "https://testnet.bitmex.com"
             self._wss_url = "wss://testnet.bitmex.com/realtime"
@@ -39,10 +38,16 @@ class BitmexClient:
 
         self.prices = dict()
 
+        self.logs = []
+
         t = threading.Thread(target=self._start_ws)
         t.start()
 
         logger.info("Bitmex Client successfully initialized")
+
+    def _add_log(self, msg: str):
+        logger.info("%s", msg)
+        self.logs.append({"log": msg, "displayed": False})
 
     def _generate_signature(self, method: str, endpoint: str, expires: str, data: typing.Dict) -> str:
 
@@ -217,6 +222,10 @@ class BitmexClient:
                         self.prices[symbol]['bid'] = d['bidPrice']
                     if 'askPrice' in d:
                         self.prices[symbol]['ask'] = d['askPrice']
+
+                    if symbol == "XBTUSD":
+                        self._add_log(symbol + " " + str(self.prices[symbol]['bid']) + " / " +
+                                                         str(self.prices[symbol]['ask']))
 
     def subscribe_channel(self, topic: str):
         data = dict()
