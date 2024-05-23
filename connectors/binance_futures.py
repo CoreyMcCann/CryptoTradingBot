@@ -1,20 +1,25 @@
 import logging
 import requests
 import time
+import typing
+
+from urllib.parse import urlencode
+
 import hmac
 import hashlib
-from urllib.parse import urlencode
+
 import websocket
-import threading
 import json
+
+import threading
+
 from models import *
-import typing
+
 
 logger = logging.getLogger()
 
 
 class BinanceFuturesClient:
-
     def __init__(self, public_key: str, secret_key: str, testnet: bool):
         if testnet:
             self._base_url = "https://testnet.binancefuture.com"
@@ -88,7 +93,7 @@ class BinanceFuturesClient:
 
         if exchange_info is not None:
             for contract_data in exchange_info['symbols']:
-                contracts[contract_data['pair']] = Contract(contract_data, "binance")
+                contracts[contract_data['symbol']] = Contract(contract_data, "binance")
 
         return contracts
 
@@ -104,7 +109,8 @@ class BinanceFuturesClient:
 
         if raw_candles is not None:
             for c in raw_candles:
-                candles.append(Candle(c, "binance"))
+                candles.append(Candle(c, interval, "binance"))
+                print(c)
 
         return candles
 
@@ -129,7 +135,7 @@ class BinanceFuturesClient:
 
         balances = dict()
 
-        account_data = self._make_request("GET", "/fapi/v2/account", data)
+        account_data = self._make_request("GET", "/fapi/v1/account", data)
 
         if account_data is not None:
             for a in account_data['assets']:
@@ -161,6 +167,7 @@ class BinanceFuturesClient:
         return order_status
 
     def cancel_order(self, contract: Contract, order_id: int) -> OrderStatus:
+
         data = dict()
         data['orderId'] = order_id
         data['symbol'] = contract.symbol
@@ -176,6 +183,7 @@ class BinanceFuturesClient:
         return order_status
 
     def get_order_status(self, contract: Contract, order_id: int) -> OrderStatus:
+
         data = dict()
         data['timestamp'] = int(time.time() * 1000)
         data['symbol'] = contract.symbol
@@ -185,13 +193,13 @@ class BinanceFuturesClient:
         order_status = self._make_request("GET", "/fapi/v1/order", data)
 
         if order_status is not None:
-            order_status = OrderStatus(order_status)
+            order_status = OrderStatus(order_status, "binance")
 
         return order_status
 
     def _start_ws(self):
         self._ws = websocket.WebSocketApp(self._wss_url, on_open=self._on_open, on_close=self._on_close,
-                                        on_error=self._on_error, on_message=self._on_message)
+                                         on_error=self._on_error, on_message=self._on_message)
 
         while True:
             try:
@@ -206,7 +214,7 @@ class BinanceFuturesClient:
         self.subscribe_channel(list(self.contracts.values()), "bookTicker")
 
     def _on_close(self, ws):
-        logger.warning("Binance WebSocket connection close")
+        logger.warning("Binance Websocket connection closed")
 
     def _on_error(self, ws, msg: str):
         logger.error("Binance connection error: %s", msg)

@@ -21,6 +21,7 @@ logger = logging.getLogger()
 
 class BitmexClient:
     def __init__(self, public_key: str, secret_key: str, testnet: bool):
+
         if testnet:
             self._base_url = "https://testnet.bitmex.com"
             self._wss_url = "wss://testnet.bitmex.com/realtime"
@@ -223,10 +224,6 @@ class BitmexClient:
                     if 'askPrice' in d:
                         self.prices[symbol]['ask'] = d['askPrice']
 
-                    if symbol == "XBTUSD":
-                        self._add_log(symbol + " " + str(self.prices[symbol]['bid']) + " / " +
-                                                         str(self.prices[symbol]['ask']))
-
     def subscribe_channel(self, topic: str):
         data = dict()
         data['op'] = "subscribe"
@@ -237,5 +234,6 @@ class BitmexClient:
             self._ws.send(json.dumps(data))
         except Exception as e:
             logger.error("Websocket error while subscribing to %s: %s", topic, e)
+
 
 
