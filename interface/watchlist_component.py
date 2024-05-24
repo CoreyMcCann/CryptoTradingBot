@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkmacosx import Button
 import typing
 
 from models import *
@@ -96,7 +97,7 @@ class Watchlist(tk.Frame):
                                                      bg=BG_COLOR, fg=FG_COLOR_2, font=GLOBAL_FONT)
         self.body_widgets['ask'][b_index].grid(row=b_index, column=3)
 
-        self.body_widgets['remove'][b_index] = tk.Button(self._table_frame, text="X",
+        self.body_widgets['remove'][b_index] = Button(self._table_frame, text="X",
                                                          bg="darkred", fg=FG_COLOR, font=GLOBAL_FONT,
                                                          command=lambda: self._remove_symbol(b_index))
         self.body_widgets['remove'][b_index].grid(row=b_index, column=4)
