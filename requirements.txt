@@ -1,0 +1,5 @@
+pandas==2.2.2
+pip-chill==1.0.3
+pipreqs==0.5.0
+tkmacosx==1.0.5
+websocket-client==1.8.0
