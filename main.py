@@ -1,10 +1,18 @@
 import logging
+import os
 
+from dotenv import load_dotenv
 from connectors.binance import BinanceClient
 from connectors.bitmex import BitmexClient
 
+load_dotenv()
 from interface.root_component import Root
 
+# Load API keys in a single step to avoid repeated calls to os.getenv()
+binance_public_key = os.getenv('BINANCE_PUBLIC_KEY')
+binance_private_key = os.getenv('BINANCE_PRIVATE_KEY')
+bitmex_public_key = os.getenv('BITMEX_PUBLIC_KEY')
+bitmex_private_key = os.getenv('BITMEX_PRIVATE_KEY')
 
 # Create and configure the logger object
 
@@ -27,10 +35,12 @@ logger.addHandler(file_handler)
 
 if __name__ == '__main__':  # Execute the following code only when executing main.py (not when importing it)
 
-    binance = BinanceClient("",
-                            "",
+    binance = BinanceClient(binance_public_key,
+                            binance_private_key,
                             testnet=True, futures=True)
-    bitmex = BitmexClient("", "", testnet=True)
+    bitmex = BitmexClient(bitmex_public_key, 
+                          bitmex_private_key,
+                          testnet=True)
 
     root = Root(binance, bitmex)
     root.mainloop()

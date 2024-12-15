@@ -262,7 +262,7 @@ class TechnicalStrategy(Strategy):
 
         closes = pd.Series(close_list)
 
-        # Calculate the different between the value of one row and the value of the row before
+        # Calculate the difference between the value of one row and the value of the row before
         delta = closes.diff().dropna()
 
         up, down = delta.copy(), delta.copy()

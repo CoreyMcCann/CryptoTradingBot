@@ -47,8 +47,8 @@ class StrategyEditor(tk.Frame):
         self._table_frame = tk.Frame(self, bg=BG_COLOR)
         self._table_frame.pack(side=tk.TOP)
 
-        self._add_button = tk.Button(self._commands_frame, text="Add strategy", font=GLOBAL_FONT,
-                                     command=self._add_strategy_row, bg=BG_COLOR_2, fg=FG_COLOR)
+        self._add_button = tkmac.Button(self._commands_frame, text="Add strategy", font=GLOBAL_FONT,
+                                     command=self._add_strategy_row, bg=BG_COLOR_2, fg=FG_COLOR, borderless=True)
         self._add_button.pack(side=tk.TOP)
 
         self.body_widgets = dict()
@@ -72,11 +72,11 @@ class StrategyEditor(tk.Frame):
             {"code_name": "take_profit", "widget": tk.Entry, "data_type": float, "width": 7, "header": "TP %"},
             {"code_name": "stop_loss", "widget": tk.Entry, "data_type": float, "width": 7, "header": "SL %"},
             {"code_name": "parameters", "widget": tk.Button, "data_type": float, "text": "Parameters",
-             "bg": BG_COLOR_2, "command": self._show_popup, "header": "", "width": 10},
+             "bg": BG_COLOR_2, "command": self._show_popup, "header": "", "width": 70},
             {"code_name": "activation", "widget": tk.Button, "data_type": float, "text": "OFF",
-             "bg": "darkred", "command": self._switch_strategy, "header": "", "width" : 8},
+             "bg": "darkred", "command": self._switch_strategy, "header": "", "width" : 40},
             {"code_name": "delete", "widget": tk.Button, "data_type": float, "text": "X",
-             "bg": "darkred", "command": self._delete_row, "header": "", "width": 6},
+             "bg": "darkred", "command": self._delete_row, "header": "", "width": 40},
 
         ]
 
@@ -136,12 +136,13 @@ class StrategyEditor(tk.Frame):
                 self.body_widgets[code_name][b_index] = tk.OptionMenu(self._body_frame.sub_frame,
                                                                       self.body_widgets[code_name + "_var"][b_index],
                                                                       *base_param['values'])
-                self.body_widgets[code_name][b_index].config(width=base_param['width'], bd=0, indicatoron=0)
+                self.body_widgets[code_name][b_index].config(width=base_param['width'], highlightthickness=False,
+                                                             bd=-1, font=GLOBAL_FONT, indicatoron=0, bg=BG_COLOR)
 
             elif base_param['widget'] == tk.Entry:
                 self.body_widgets[code_name][b_index] = tk.Entry(self._body_frame.sub_frame, justify=tk.CENTER,
-                                                                 bg=BG_COLOR_2, fg=FG_COLOR,
-                                                                 font=GLOBAL_FONT, bd=1, width=base_param['width'])
+                                                                 bg=BG_COLOR_2, fg=FG_COLOR, highlightthickness=False,
+                                                                 font=GLOBAL_FONT, bd=0, width=base_param['width'])
 
                 if base_param['data_type'] == int:
                     self.body_widgets[code_name][b_index].config(validate='key', validatecommand=(self._valid_integer, "%P"))
@@ -149,8 +150,9 @@ class StrategyEditor(tk.Frame):
                     self.body_widgets[code_name][b_index].config(validate='key', validatecommand=(self._valid_float, "%P"))
 
             elif base_param['widget'] == tk.Button:
-                self.body_widgets[code_name][b_index] = tk.Button(self._body_frame.sub_frame, text=base_param['text'],
+                self.body_widgets[code_name][b_index] = tkmac.Button(self._body_frame.sub_frame, text=base_param['text'],
                                         bg=base_param['bg'], fg=FG_COLOR, font=GLOBAL_FONT, width=base_param['width'],
+                                        borderless=True,
                                         command=lambda frozen_command=base_param['command']: frozen_command(b_index))
             else:
                 continue
@@ -231,8 +233,8 @@ class StrategyEditor(tk.Frame):
 
         # Validation Button
 
-        validation_button = tk.Button(self._popup_window, text="Validate", bg=BG_COLOR_2, fg=FG_COLOR,
-                                      command=lambda: self._validate_parameters(b_index))
+        validation_button = tkmac.Button(self._popup_window, text="Validate", bg=BG_COLOR_2, fg=FG_COLOR,
+                                      command=lambda: self._validate_parameters(b_index), borderless=True)
         validation_button.grid(row=row_nb, column=0, columnspan=2)
 
     def _validate_parameters(self, b_index: int):

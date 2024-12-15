@@ -80,7 +80,7 @@ class TradesWatch(tk.Frame):
         # Strategy
 
         self.body_widgets['strategy'][t_index] = tk.Label(self._body_frame.sub_frame, text=trade.strategy, bg=BG_COLOR,
-                                                        fg=FG_COLOR_2, font=GLOBAL_FONT, width=self._col_width)
+                                                          fg=FG_COLOR_2, font=GLOBAL_FONT, width=self._col_width)
         self.body_widgets['strategy'][t_index].grid(row=b_index, column=3)
 
         # Side
